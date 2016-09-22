@@ -1,0 +1,6 @@
+prototype(TYPO3.Neos:Page).contentDimensionSelector = TYPO3.TypoScript:Template {
+  templatePath = 'resource://ByTorsten.Neos.ContentDimensionSelector/Private/Templates/TypoScriptObjects/RequireHook.html'
+
+  @position = 'before neosBackendFooter'
+  @if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+}

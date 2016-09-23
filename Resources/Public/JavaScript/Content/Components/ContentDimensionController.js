@@ -1,23 +1,47 @@
 define(
 [
   'ContentDimensionController',
-  'Library/jquery-with-dependencies'
+  'Content/Application',
+  'Library/jquery-with-dependencies',
 ],
 function (
   ContentDimensionController,
+  Application,
   $
 ) {
 
   ContentDimensionController.reopen({
 
+    application: Application,
+
+    _setDimensionBasedOnUrl: function () {
+      if (!this.application.get('_isLoadingPage')) {
+        var uri = location.href;
+        var dimensions = this.get('dimensions');
+        var matches = uri.match(/@.+;(.+)$/);
+        if (matches) {
+          var dimensionValues = matches[1].split('&');
+          $.each(dimensionValues, function (index, dimensionValue) {
+            var parts = dimensionValue.split('=');
+            var dimensionName = parts[0];
+            var presetIdentifier = parts[1];
+
+            var dimension = dimensions.findBy('identifier', dimensionName);
+            dimension.presets.setEach('selected', false);
+            var selectedPreset = dimension.presets.findBy('identifier', presetIdentifier);
+            selectedPreset.set('selected', true);
+            dimension.set('selected', selectedPreset);
+          });
+        }
+      }
+    }.observes('application._isLoadingPage'),
+
     _updateAvailableDimensionPresetsAfterChoosingPreset: function(changedDimension) {
       var dimensions = this.get('dimensions');
       var allConstraints = changedDimension.get('selected.constraints') || {};
 
-      window.dimensions = dimensions;
-
-      $.each(allConstraints, function (dimensionIdentifier, constraints) {
-        var dimension = dimensions.findBy('identifier', dimensionIdentifier);
+      $.each(allConstraints, function (dimensionName, constraints) {
+        var dimension = dimensions.findBy('identifier', dimensionName);
 
         // Set all preset depending on the wildcard configuration
         dimension.presets.setEach('disabled', constraints['*'] === false);

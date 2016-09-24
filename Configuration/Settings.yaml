@@ -1,8 +1,5 @@
-TYPO3:
+ByTorsten:
   Neos:
-    typoScript:
-      autoInclude:
-        'ByTorsten.Neos.ContentDimensionSelector': TRUE
-    userInterface:
-      requireJsPathMapping:
-        'ByTorsten.Neos.ContentDimensionSelector': 'resource://ByTorsten.Neos.ContentDimensionSelector/Public/JavaScript'
+    ExtendUi:
+      replacements:
+        'Content/Components/ContentDimensionController': 'resource://ByTorsten.Neos.ContentDimensionSelector/Public/JavaScript/Content/Components/ContentDimensionController.js'

@@ -3,7 +3,8 @@
     "type": "typo3-flow-plugin",
     "name": "bytorsten/neos-contentdimensionselector",
     "require": {
-        "typo3/neos": "2.3.3"
+        "typo3/neos": "2.3.3",
+        "bytorsten/neos-extendui": "dev-master"
     },
     "autoload": {
         "psr-0": {

@@ -6,35 +6,31 @@ define(
 ],
 function (
   ContentDimensionController,
-  Application,
+  ContentModule,
   $
 ) {
 
   ContentDimensionController.reopen({
 
-    application: Application,
-
     _setDimensionBasedOnUrl: function () {
-      if (!this.application.get('_isLoadingPage')) {
-        var uri = location.href;
-        var dimensions = this.get('dimensions');
-        var matches = uri.match(/@.+;(.+)$/);
-        if (matches) {
-          var dimensionValues = matches[1].split('&');
-          $.each(dimensionValues, function (index, dimensionValue) {
-            var parts = dimensionValue.split('=');
-            var dimensionName = parts[0];
-            var presetIdentifier = parts[1];
+      var uri = location.href;
+      var dimensions = this.get('dimensions');
+      var matches = uri.match(/@.+;(.+)$/);
+      if (matches) {
+        var dimensionValues = matches[1].split('&');
+        $.each(dimensionValues, function (index, dimensionValue) {
+          var parts = dimensionValue.split('=');
+          var dimensionName = parts[0];
+          var presetIdentifier = parts[1];
 
-            var dimension = dimensions.findBy('identifier', dimensionName);
-            dimension.presets.setEach('selected', false);
-            var selectedPreset = dimension.presets.findBy('identifier', presetIdentifier);
-            selectedPreset.set('selected', true);
-            dimension.set('selected', selectedPreset);
-          });
-        }
+          var dimension = dimensions.findBy('identifier', dimensionName);
+          dimension.presets.setEach('selected', false);
+          var selectedPreset = dimension.presets.findBy('identifier', presetIdentifier);
+          selectedPreset.set('selected', true);
+          dimension.set('selected', selectedPreset);
+        });
       }
-    }.observes('application._isLoadingPage'),
+    },
 
     _updateAvailableDimensionPresetsAfterChoosingPreset: function(changedDimension) {
       var dimensions = this.get('dimensions');
@@ -65,6 +61,10 @@ function (
         }
       });
     }
+  });
+
+  ContentModule.on('pageLoaded', function () {
+    ContentDimensionController._setDimensionBasedOnUrl();
   });
 
   return ContentDimensionController;
